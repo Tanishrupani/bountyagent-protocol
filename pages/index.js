@@ -7,7 +7,9 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const handleGenerate = async () => {
+    if (!prompt) return;
     setLoading(true);
+    setOutput('');
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
@@ -15,9 +17,14 @@ export default function Home() {
         body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
-      setOutput(data.code || data.message);
+      
+      if (res.ok) {
+        setOutput(data.code);
+      } else {
+        setOutput(`System Error: ${data.message || 'Check Environment Variables'}`);
+      }
     } catch (err) {
-      setOutput("Error: Agent synchronization failed.");
+      setOutput("Connection lost. Ensure the Groq API key is active in Vercel.");
     }
     setLoading(false);
   };
@@ -25,30 +32,30 @@ export default function Home() {
   return (
     <div className="app-container">
       <Head>
-        <title>BountyAgent Protocol</title>
+        <title>Nexus Protocol</title>
       </Head>
 
       <aside className="sidebar">
         <div className="brand">
-          <div className="logo"></div>
-          <span className="name">BountyAgent</span>
+          <div className="profile-wrapper">
+             <div className="placeholder-avatar"></div> 
+          </div>
+          <span className="name">Nexus</span>
         </div>
         <div className="nav-group">
           <label>Workspace</label>
-          <div className="nav-item active">+ New Agent</div>
-          <div className="nav-item">History</div>
+          <div className="nav-item active">+ New Project</div>
+          <div className="nav-item">Archive</div>
         </div>
-        <div className="version-tag">SYSTEM_STABLE // V1.2</div>
+        <div className="version-tag">STABLE // V1.2</div>
       </aside>
 
       <main className="canvas">
-        {/* Centered Typography Section */}
         <header className="hero">
           <h1>Build anything.</h1>
           <p>The autonomous engine for rapid development.</p>
         </header>
 
-        {/* Wide & Low Profile Input Box */}
         <section className="input-area">
           <div className="card">
             <textarea 
@@ -58,7 +65,7 @@ export default function Home() {
             />
             <div className="card-footer">
               <button onClick={handleGenerate} disabled={loading}>
-                {loading ? 'Analyzing...' : 'Generate Code'}
+                {loading ? 'Consulting Nexus...' : 'Generate Code'}
               </button>
             </div>
           </div>
@@ -67,7 +74,7 @@ export default function Home() {
         {output && (
           <section className="output-area">
             <div className="output-card">
-              <div className="output-label">Output Stream</div>
+              <div className="output-label">Nexus Intelligence Stream</div>
               <pre>{output}</pre>
             </div>
           </section>
@@ -78,7 +85,7 @@ export default function Home() {
         * { box-sizing: border-box; }
         body, html { 
           margin: 0; padding: 0; 
-          background: #FFF9F2; /* Creamy Peach */
+          background: #FFF9F2; 
           color: #1A1A1A;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
@@ -89,48 +96,38 @@ export default function Home() {
           padding: 40px; display: flex; flex-direction: column; 
         }
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 60px; }
-        .logo { width: 32px; height: 32px; background: #1A1A1A; border-radius: 10px; }
+        .placeholder-avatar { 
+          width: 40px; height: 40px; background: #1A1A1A; border-radius: 50%; 
+        }
         .name { font-weight: 900; font-size: 22px; letter-spacing: -1px; }
         
         .nav-group label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; display: block; margin-bottom: 20px; }
-        .nav-item { padding: 14px; border-radius: 14px; font-size: 15px; cursor: pointer; transition: all 0.2s ease; margin-bottom: 10px; }
-        .nav-item.active { background: white; border: 1px solid #EDE7DF; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
-        .nav-item:hover { transform: translateY(-2px); background: white; }
+        .nav-item { padding: 14px; border-radius: 14px; font-size: 15px; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+        .nav-item.active { background: white; border: 1px solid #EDE7DF; font-weight: 700; }
         
         .canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; overflow-y: auto; }
-        
-        /* Centered Header Styles */
         .hero { width: 100%; max-width: 900px; text-align: center; margin-bottom: 50px; }
         h1 { font-size: 88px; font-weight: 900; margin: 0; letter-spacing: -5px; line-height: 0.9; }
-        .hero p { font-size: 22px; opacity: 0.4; margin-top: 20px; font-weight: 500; letter-spacing: -0.5px; }
+        .hero p { font-size: 22px; opacity: 0.4; margin-top: 20px; font-weight: 500; }
         
-        /* Wide and Low Profile Card */
         .input-area { width: 100%; max-width: 900px; } 
         .card { 
           background: white; border-radius: 24px; padding: 24px; 
           border: 1px solid #EDE7DF; box-shadow: 0 40px 80px rgba(180, 160, 140, 0.12);
-          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .card:focus-within { transform: translateY(-8px); border-color: #1A1A1A; box-shadow: 0 50px 100px rgba(0, 0, 0, 0.05); }
-        
-        textarea { 
-          width: 100%; 
-          height: 80px; /* Significantly shorter height for that sleek bar look */
-          border: none; outline: none; font-size: 20px; resize: none; background: transparent; line-height: 1.5; color: #1A1A1A;
-        }
+        textarea { width: 100%; height: 80px; border: none; outline: none; font-size: 20px; resize: none; background: transparent; }
         
         .card-footer { display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #FAF5EF; }
         button { 
           background: #1A1A1A; color: white; padding: 12px 32px; border-radius: 12px; 
-          font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; font-size: 14px;
+          font-weight: 800; border: none; cursor: pointer; font-size: 14px;
         }
-        button:hover { background: #000; transform: scale(1.02); }
 
         .output-area { width: 100%; max-width: 900px; margin-top: 40px; }
-        .output-card { background: white; border-radius: 24px; padding: 32px; border: 1px solid #EDE7DF; text-align: left; }
+        .output-card { background: white; border-radius: 24px; padding: 32px; border: 1px solid #EDE7DF; }
         .output-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; margin-bottom: 16px; }
-        pre { font-family: "SF Mono", Menlo, monospace; white-space: pre-wrap; font-size: 14px; color: #4A4A4A; line-height: 1.6; margin: 0; }
-        .version-tag { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; letter-spacing: 1px; }
+        pre { font-family: monospace; white-space: pre-wrap; font-size: 14px; color: #4A4A4A; line-height: 1.6; }
+        .version-tag { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; }
       `}</style>
     </div>
   );
