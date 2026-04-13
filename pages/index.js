@@ -40,9 +40,9 @@ export default function Home() {
         <div className="nav-group">
           <label>Workspace</label>
           <div className="nav-item active">New Project</div>
-          <div className="nav-item">Archive</div>
+          <div className="nav-item">History</div>
         </div>
-        <div className="version">STABLE // V1.2</div>
+        <div className="version">V1.2 // STABLE</div>
       </aside>
 
       <main className="canvas">
@@ -59,8 +59,8 @@ export default function Home() {
               placeholder="What are we building today?"
             />
             <div className="card-footer">
-              <button onClick={handleGenerate} disabled={loading} className={loading ? 'loading' : ''}>
-                {loading ? 'Nexus Thinking...' : 'Generate'}
+              <button onClick={handleGenerate} disabled={loading}>
+                {loading ? 'Consulting Nexus...' : 'Generate'}
               </button>
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function Home() {
         {output && (
           <div className="output-area">
             <div className="output-card">
-              <div className="output-label">Nexus Stream</div>
+              <div className="output-label">Nexus Intelligence Stream</div>
               <pre>{output}</pre>
             </div>
           </div>
@@ -84,22 +84,21 @@ export default function Home() {
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 60px; }
         .name { font-weight: 900; font-size: 24px; letter-spacing: -1px; }
         .nav-group label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.3; margin-bottom: 20px; display: block; }
-        .nav-item { padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-size: 14px; transition: 0.2s; }
+        .nav-item { padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
         .nav-item.active { background: white; border: 1px solid #EDE7DF; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; overflow-y: auto; }
-        .hero { text-align: center; margin-bottom: 50px; }
+        .hero { text-align: center; margin-bottom: 40px; }
         h1 { font-size: 88px; font-weight: 900; letter-spacing: -5px; margin: 0; line-height: 0.9; }
-        .hero p { font-size: 22px; opacity: 0.4; margin-top: 15px; font-weight: 500; }
+        .hero p { font-size: 22px; opacity: 0.4; margin-top: 15px; }
         .input-area { width: 100%; max-width: 900px; }
-        .card { background: white; border-radius: 24px; padding: 24px; border: 1px solid #EDE7DF; box-shadow: 0 40px 80px rgba(180, 160, 140, 0.1); }
+        .card { background: white; border-radius: 24px; padding: 24px; border: 1px solid #EDE7DF; box-shadow: 0 40px 80px rgba(0,0,0,0.05); }
         textarea { width: 100%; height: 80px; border: none; outline: none; font-size: 20px; resize: none; background: transparent; }
         .card-footer { display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #FAF5EF; }
-        button { background: #1A1A1A; color: white; padding: 12px 36px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        button.loading { opacity: 0.5; cursor: not-allowed; }
+        button { background: #1A1A1A; color: white; padding: 12px 30px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #000; transform: scale(1.02); }
         .output-area { width: 100%; max-width: 900px; margin-top: 40px; padding-bottom: 100px; }
         .output-card { background: white; padding: 32px; border-radius: 28px; border: 1px solid #EDE7DF; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        .output-label { font-size: 10px; font-weight: 900; text-transform: uppercase; opacity: 0.2; letter-spacing: 2px; margin-bottom: 15px; }
-        pre { white-space: pre-wrap; font-family: 'SF Mono', monospace; font-size: 14px; line-height: 1.6; color: #333; margin: 0; }
+        pre { white-space: pre-wrap; font-family: monospace; font-size: 14px; line-height: 1.6; color: #333; }
         .version { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; }
       `}</style>
     </div>
