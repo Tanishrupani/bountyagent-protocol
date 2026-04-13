@@ -1,105 +1,85 @@
-import React, { useState } from 'react';
-import Head from 'next/head';
+import { useState } from 'react';
 
-export default function LandingPage() {
+export default function Home() {
   const [prompt, setPrompt] = useState('');
-  const [result, setResult] = useState('');
+  const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleInitialize = async () => {
-    if (!prompt) return;
+  const handleGenerate = async () => {
     setLoading(true);
-    setResult('');
-
     try {
-      const response = await fetch('/api/generate', {
+      const res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
       });
-      const data = await response.json();
-      setResult(data.code);
-    } catch (error) {
-      setResult('// ERROR: Connection to Agent failed. System offline.');
-    } finally {
-      setLoading(false);
+      const data = await res.json();
+      setOutput(data.code || data.message);
+    } catch (err) {
+      setOutput("Error connecting to Agent.");
     }
+    setLoading(false);
   };
 
   return (
-    <div className="container">
-      <Head>
-        <title>BountyAgent | Autonomous Code Fulfillment</title>
-        <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-      </Head>
-
-      <nav>
-        <div className="logo">BOUNTY_AGENT_v1.0</div>
-        <div className="status-blink">{loading ? 'AGENT_PROCESSING...' : 'SYSTEM_READY'}</div>
-      </nav>
-
-      <main>
-        <section className="hero">
-          <h1>THE WORLD'S FIRST <span className="highlight">AUTONOMOUS</span> CODE MARKETPLACE.</h1>
-          <p>Don't hire a developer. Deploy an Agent. Get your code in seconds.</p>
-        </section>
-
-        <section className="terminal-box">
-          <div className="terminal-header">terminal.exe — New Task</div>
-          <div className="terminal-body">
-            <span className="prompt">root@bountyagent:~$</span>
-            <input 
-              type="text" 
-              placeholder="Describe the script or tool you need built..." 
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              disabled={loading}
-              onKeyPress={(e) => e.key === 'Enter' && handleInitialize()}
-            />
-            <button onClick={handleInitialize} disabled={loading}>
-              {loading ? 'EXECUTING...' : 'INITIALIZE_GEN'}
-            </button>
+    <div className="flex h-screen bg-[#F9F8F3] text-[#2C2C2C] font-sans">
+      {/* Sidebar */}
+      <div className="w-64 bg-[#F1EFE7] border-r border-[#E5E2D5] p-6 flex flex-col">
+        <h2 className="font-bold text-lg mb-8 tracking-tight">BountyAgent</h2>
+        <nav className="space-y-4 flex-1">
+          <div className="text-sm font-medium opacity-60">History</div>
+          <div className="p-3 bg-white rounded-xl shadow-sm cursor-pointer hover:scale-105 transition-transform">
+            New Project
           </div>
-        </section>
+        </nav>
+        <div className="text-xs opacity-40">v1.1 Modern Protocol</div>
+      </div>
 
-        {result && (
-          <section className="output-box">
-            <div className="terminal-header">output_stream.log</div>
-            <pre className="output-body"><code>{result}</code></pre>
-            <div className="terminal-footer">
-                <button className="secondary-btn" onClick={() => navigator.clipboard.writeText(result)}>COPY_CODE</button>
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="w-full max-w-2xl space-y-8">
+          
+          {/* Header */}
+          <div className="text-center space-y-2">
+            <h1 className="text-4xl font-bold tracking-tight">What are we building today?</h1>
+            <p className="opacity-50">Enter a prompt to generate professional code instantly.</p>
+          </div>
+
+          {/* Input Box */}
+          <div className="bg-white p-2 rounded-2xl shadow-xl border border-[#E5E2D5] hover:scale-[1.02] transition-transform duration-300">
+            <div className="flex flex-col p-4">
+              <textarea
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="e.g. Create a landing page for a pizza shop..."
+                className="w-full h-32 resize-none outline-none text-lg placeholder:opacity-30"
+              />
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={handleGenerate}
+                  disabled={loading}
+                  className="bg-[#2C2C2C] text-white px-6 py-2 rounded-xl font-medium hover:bg-black transition-colors disabled:opacity-50"
+                >
+                  {loading ? 'Generating...' : 'Generate Code'}
+                </button>
+              </div>
             </div>
-          </section>
-        )}
-      </main>
+          </div>
+
+          {/* Output Area */}
+          {output && (
+            <div className="bg-[#F1EFE7] p-6 rounded-2xl border border-[#E5E2D5] hover:scale-[1.01] transition-transform duration-300 overflow-auto max-h-96">
+              <pre className="text-sm font-mono whitespace-pre-wrap">
+                {output}
+              </pre>
+            </div>
+          )}
+        </div>
+      </div>
 
       <style jsx global>{`
-        body { background-color: #050505; color: #00ff41; font-family: 'Space Mono', monospace; margin: 0; padding: 0; }
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
-        nav { display: flex; justify-content: space-between; padding: 20px 0; border-bottom: 1px solid #1a1a1a; }
-        .logo { font-weight: bold; letter-spacing: 2px; }
-        .status-blink { color: #00ff41; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
-        
-        .hero { margin-top: 80px; text-align: center; }
-        h1 { font-size: 2.5rem; line-height: 1.2; font-weight: 700; }
-        .highlight { background: #00ff41; color: #000; padding: 0 10px; }
-        p { color: #888; margin-top: 20px; font-size: 1.1rem; }
-
-        .terminal-box, .output-box { margin-top: 40px; border: 1px solid #333; border-radius: 5px; overflow: hidden; background: #0a0a0a; }
-        .terminal-header { background: #1a1a1a; padding: 10px; font-size: 0.8rem; color: #888; border-bottom: 1px solid #333; }
-        .terminal-body { padding: 20px; display: flex; align-items: center; gap: 10px; }
-        .output-body { padding: 20px; color: #fff; white-space: pre-wrap; margin: 0; font-size: 0.9rem; border-bottom: 1px solid #333; line-height: 1.5; }
-        .terminal-footer { padding: 10px; background: #0a0a0a; display: flex; justify-content: flex-end; }
-        
-        input { background: transparent; border: none; color: #00ff41; font-family: 'Space Mono', monospace; flex-grow: 1; outline: none; font-size: 1.1rem; }
-        button { background: #00ff41; border: none; color: #000; font-family: 'Space Mono', monospace; font-weight: bold; padding: 10px 20px; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #fff; }
-        button:disabled { background: #004411; color: #888; cursor: not-allowed; }
-        .secondary-btn { background: transparent; border: 1px solid #00ff41; color: #00ff41; font-size: 0.8rem; padding: 5px 10px; }
-        .secondary-btn:hover { background: #00ff41; color: #000; }
-        
-        .prompt { color: #00ff41; font-weight: bold; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body { font-family: 'Inter', sans-serif; margin: 0; }
       `}</style>
     </div>
   );
