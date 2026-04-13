@@ -21,21 +21,16 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // Updated to the latest supported high-power model
+        // THIS IS THE FIX: Using the new versatile model
         model: "llama-3.3-70b-versatile",
         messages: [
           {
             role: "system",
-            content: `You are the Nexus Protocol Intelligence. 
-            You are a world-class Senior Software Engineer and Architect. 
-            Your goal is to provide high-end, clean, and extremely efficient code. 
-            Format your responses using Markdown. 
-            If the user asks for a component, provide the full code block. 
-            Be concise, professional, and elite.`
+            content: "You are Nexus Protocol Intelligence. You are a world-class Senior Software Architect. Provide elite, production-ready code. No small talk."
           },
           { role: "user", content: prompt },
         ],
-        temperature: 0.6, // Slightly lower for more precise code
+        temperature: 0.6,
       }),
     });
 
@@ -49,6 +44,6 @@ export default async function handler(req, res) {
 
     res.status(200).json({ code: data.choices[0].message.content });
   } catch (error) {
-    res.status(500).json({ message: "Neural Link Error: Connection was reset." });
+    res.status(500).json({ message: "Neural Link Error: Connection reset." });
   }
 }
