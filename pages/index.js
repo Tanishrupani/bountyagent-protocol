@@ -42,11 +42,13 @@ export default function Home() {
       </aside>
 
       <main className="canvas">
+        {/* Centered Typography Section */}
         <header className="hero">
           <h1>Build anything.</h1>
           <p>The autonomous engine for rapid development.</p>
         </header>
 
+        {/* Wide & Low Profile Input Box */}
         <section className="input-area">
           <div className="card">
             <textarea 
@@ -76,14 +78,14 @@ export default function Home() {
         * { box-sizing: border-box; }
         body, html { 
           margin: 0; padding: 0; 
-          background: #FFF9F2; /* Creamy Peach Background */
+          background: #FFF9F2; /* Creamy Peach */
           color: #1A1A1A;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         .app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
         
         .sidebar { 
-          width: 280px; background: #FAF5EF; border-right: 1px solid #EDE7DF; 
+          width: 260px; background: #FAF5EF; border-right: 1px solid #EDE7DF; 
           padding: 40px; display: flex; flex-direction: column; 
         }
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 60px; }
@@ -96,33 +98,36 @@ export default function Home() {
         .nav-item:hover { transform: translateY(-2px); background: white; }
         
         .canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; overflow-y: auto; }
-        .hero { width: 100%; max-width: 850px; margin-bottom: 48px; }
-        h1 { font-size: 82px; font-weight: 900; margin: 0; letter-spacing: -4px; line-height: 0.95; }
-        .hero p { font-size: 24px; opacity: 0.4; margin-top: 16px; font-weight: 500; }
         
-        .input-area { width: 100%; max-width: 850px; } /* Increased width from 760px */
+        /* Centered Header Styles */
+        .hero { width: 100%; max-width: 900px; text-align: center; margin-bottom: 50px; }
+        h1 { font-size: 88px; font-weight: 900; margin: 0; letter-spacing: -5px; line-height: 0.9; }
+        .hero p { font-size: 22px; opacity: 0.4; margin-top: 20px; font-weight: 500; letter-spacing: -0.5px; }
+        
+        /* Wide and Low Profile Card */
+        .input-area { width: 100%; max-width: 900px; } 
         .card { 
-          background: white; border-radius: 28px; padding: 28px; 
-          border: 1px solid #EDE7DF; box-shadow: 0 30px 60px rgba(180, 160, 140, 0.08);
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          background: white; border-radius: 24px; padding: 24px; 
+          border: 1px solid #EDE7DF; box-shadow: 0 40px 80px rgba(180, 160, 140, 0.12);
+          transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .card:focus-within { transform: translateY(-4px); border-color: #D6C7B8; }
+        .card:focus-within { transform: translateY(-8px); border-color: #1A1A1A; box-shadow: 0 50px 100px rgba(0, 0, 0, 0.05); }
         
         textarea { 
           width: 100%; 
-          height: 100px; /* Lowered height from 160px */
-          border: none; outline: none; font-size: 22px; resize: none; background: transparent; line-height: 1.4; 
+          height: 80px; /* Significantly shorter height for that sleek bar look */
+          border: none; outline: none; font-size: 20px; resize: none; background: transparent; line-height: 1.5; color: #1A1A1A;
         }
         
-        .card-footer { display: flex; justify-content: flex-end; padding-top: 20px; border-top: 1px solid #FAF5EF; }
+        .card-footer { display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #FAF5EF; }
         button { 
-          background: #1A1A1A; color: white; padding: 14px 36px; border-radius: 14px; 
-          font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; font-size: 15px;
+          background: #1A1A1A; color: white; padding: 12px 32px; border-radius: 12px; 
+          font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; font-size: 14px;
         }
-        button:hover { background: #000; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        button:hover { background: #000; transform: scale(1.02); }
 
-        .output-area { width: 100%; max-width: 850px; margin-top: 32px; }
-        .output-card { background: white; border-radius: 24px; padding: 32px; border: 1px solid #EDE7DF; }
+        .output-area { width: 100%; max-width: 900px; margin-top: 40px; }
+        .output-card { background: white; border-radius: 24px; padding: 32px; border: 1px solid #EDE7DF; text-align: left; }
         .output-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; margin-bottom: 16px; }
         pre { font-family: "SF Mono", Menlo, monospace; white-space: pre-wrap; font-size: 14px; color: #4A4A4A; line-height: 1.6; margin: 0; }
         .version-tag { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; letter-spacing: 1px; }
