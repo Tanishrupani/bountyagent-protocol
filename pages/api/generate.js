@@ -3,13 +3,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  // DEBUG: This checks if the key actually exists in Vercel's environment
+  const apiKey = process.env.GROQ_API_KEY;
+  
+  if (!apiKey) {
+    return res.status(500).json({ 
+      message: "API Key is missing. Check Vercel Settings > Environment Variables." 
+    });
+  }
+
   const { prompt } = req.body;
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -17,22 +26,24 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: "You are the BountyAgent Protocol, a world-class Senior Software Architect. Your goal is to provide high-end, production-ready code solutions. Do not engage in small talk. Provide only the most efficient and powerful code possible."
+            content: "You are the Nexus Protocol, a world-class Senior Software Architect. Provide high-end, production-ready code. No small talk."
           },
-          {
-            role: "user",
-            content: prompt,
-          },
+          { role: "user", content: prompt },
         ],
         temperature: 0.7,
       }),
     });
 
     const data = await response.json();
-    const aiResponse = data.choices[0].message.content;
 
-    res.status(200).json({ code: aiResponse });
+    if (!response.ok) {
+      return res.status(response.status).json({ 
+        message: data.error?.message || "Groq API refused the connection." 
+      });
+    }
+
+    res.status(200).json({ code: data.choices[0].message.content });
   } catch (error) {
-    res.status(500).json({ message: "The Agent is currently recalibrating. Try again shortly." });
+    res.status(500).json({ message: "Network error. The connection was reset." });
   }
 }
