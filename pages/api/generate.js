@@ -21,8 +21,8 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // THIS IS THE FIX: Using the new versatile model
-        model: "llama-3.3-70b-versatile",
+        // THIS IS THE ONLY LINE THAT MATTERS RIGHT NOW
+        model: "llama-3.3-70b-versatile", 
         messages: [
           {
             role: "system",
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
+      // This will catch if the model name is still wrong
       return res.status(response.status).json({ 
         message: data.error?.message || "Nexus link refused by Groq." 
       });
