@@ -17,7 +17,7 @@ export default function Home() {
       const data = await res.json();
       setOutput(data.code || data.message);
     } catch (err) {
-      setOutput("Error: Deployment active but API not responding.");
+      setOutput("Error: Agent synchronization failed.");
     }
     setLoading(false);
   };
@@ -28,7 +28,6 @@ export default function Home() {
         <title>BountyAgent Protocol</title>
       </Head>
 
-      {/* Sidebar Navigation */}
       <aside className="sidebar">
         <div className="brand">
           <div className="logo"></div>
@@ -42,11 +41,10 @@ export default function Home() {
         <div className="version-tag">SYSTEM_STABLE // V1.2</div>
       </aside>
 
-      {/* Main Interface */}
       <main className="canvas">
         <header className="hero">
           <h1>Build anything.</h1>
-          <p>Type your requirements. The agent generates the code.</p>
+          <p>The autonomous engine for rapid development.</p>
         </header>
 
         <section className="input-area">
@@ -58,7 +56,7 @@ export default function Home() {
             />
             <div className="card-footer">
               <button onClick={handleGenerate} disabled={loading}>
-                {loading ? 'Processing...' : 'Generate Code'}
+                {loading ? 'Analyzing...' : 'Generate Code'}
               </button>
             </div>
           </div>
@@ -67,7 +65,7 @@ export default function Home() {
         {output && (
           <section className="output-area">
             <div className="output-card">
-              <div className="output-label">Generated Result</div>
+              <div className="output-label">Output Stream</div>
               <pre>{output}</pre>
             </div>
           </section>
@@ -78,14 +76,14 @@ export default function Home() {
         * { box-sizing: border-box; }
         body, html { 
           margin: 0; padding: 0; 
-          background: #FCFBF8; 
+          background: #FFF9F2; /* Creamy Peach Background */
           color: #1A1A1A;
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         .app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
         
         .sidebar { 
-          width: 280px; background: #F4F2ED; border-right: 1px solid #E8E6E0; 
+          width: 280px; background: #FAF5EF; border-right: 1px solid #EDE7DF; 
           padding: 40px; display: flex; flex-direction: column; 
         }
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 60px; }
@@ -94,35 +92,39 @@ export default function Home() {
         
         .nav-group label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; display: block; margin-bottom: 20px; }
         .nav-item { padding: 14px; border-radius: 14px; font-size: 15px; cursor: pointer; transition: all 0.2s ease; margin-bottom: 10px; }
-        .nav-item.active { background: white; border: 1px solid #E8E6E0; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .nav-item.active { background: white; border: 1px solid #EDE7DF; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .nav-item:hover { transform: translateY(-2px); background: white; }
         
         .canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; overflow-y: auto; }
-        .hero { width: 100%; max-width: 760px; margin-bottom: 48px; }
-        h1 { font-size: 72px; font-weight: 900; margin: 0; letter-spacing: -4px; line-height: 0.95; }
+        .hero { width: 100%; max-width: 850px; margin-bottom: 48px; }
+        h1 { font-size: 82px; font-weight: 900; margin: 0; letter-spacing: -4px; line-height: 0.95; }
         .hero p { font-size: 24px; opacity: 0.4; margin-top: 16px; font-weight: 500; }
         
-        .input-area { width: 100%; max-width: 760px; }
+        .input-area { width: 100%; max-width: 850px; } /* Increased width from 760px */
         .card { 
-          background: white; border-radius: 36px; padding: 32px; 
-          border: 1px solid #E8E6E0; box-shadow: 0 30px 60px rgba(0,0,0,0.03);
-          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          background: white; border-radius: 28px; padding: 28px; 
+          border: 1px solid #EDE7DF; box-shadow: 0 30px 60px rgba(180, 160, 140, 0.08);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .card:focus-within { transform: scale(1.02); border-color: #1A1A1A; }
-        textarea { width: 100%; height: 160px; border: none; outline: none; font-size: 22px; resize: none; background: transparent; line-height: 1.4; }
+        .card:focus-within { transform: translateY(-4px); border-color: #D6C7B8; }
         
-        .card-footer { display: flex; justify-content: flex-end; padding-top: 24px; border-top: 1px solid #F4F2ED; }
-        button { 
-          background: #1A1A1A; color: white; padding: 16px 40px; border-radius: 18px; 
-          font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; font-size: 16px;
+        textarea { 
+          width: 100%; 
+          height: 100px; /* Lowered height from 160px */
+          border: none; outline: none; font-size: 22px; resize: none; background: transparent; line-height: 1.4; 
         }
-        button:hover { background: #000; box-shadow: 0 10px 20px rgba(0,0,0,0.1); transform: translateY(-2px); }
-        button:active { transform: scale(0.95); }
+        
+        .card-footer { display: flex; justify-content: flex-end; padding-top: 20px; border-top: 1px solid #FAF5EF; }
+        button { 
+          background: #1A1A1A; color: white; padding: 14px 36px; border-radius: 14px; 
+          font-weight: 800; border: none; cursor: pointer; transition: all 0.2s; font-size: 15px;
+        }
+        button:hover { background: #000; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
 
-        .output-area { width: 100%; max-width: 760px; margin-top: 32px; }
-        .output-card { background: #F4F2ED; border-radius: 28px; padding: 32px; border: 1px solid #E8E6E0; }
-        .output-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; opacity: 0.2; margin-bottom: 16px; }
-        pre { font-family: "SF Mono", Menlo, monospace; white-space: pre-wrap; font-size: 15px; opacity: 0.8; line-height: 1.6; margin: 0; }
+        .output-area { width: 100%; max-width: 850px; margin-top: 32px; }
+        .output-card { background: white; border-radius: 24px; padding: 32px; border: 1px solid #EDE7DF; }
+        .output-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; margin-bottom: 16px; }
+        pre { font-family: "SF Mono", Menlo, monospace; white-space: pre-wrap; font-size: 14px; color: #4A4A4A; line-height: 1.6; margin: 0; }
         .version-tag { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; letter-spacing: 1px; }
       `}</style>
     </div>
