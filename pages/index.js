@@ -17,37 +17,32 @@ export default function Home() {
         body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
-      
       if (res.ok) {
         setOutput(data.code);
       } else {
-        setOutput(`System Error: ${data.message || 'Check Environment Variables'}`);
+        setOutput(`[Nexus Error]: ${data.message}`);
       }
     } catch (err) {
-      setOutput("Connection lost. Ensure the Groq API key is active in Vercel.");
+      setOutput("[Nexus Error]: Intelligence Stream Interrupted.");
     }
     setLoading(false);
   };
 
   return (
     <div className="app-container">
-      <Head>
-        <title>Nexus Protocol</title>
-      </Head>
+      <Head><title>Nexus Protocol</title></Head>
 
       <aside className="sidebar">
         <div className="brand">
-          <div className="profile-wrapper">
-             <div className="placeholder-avatar"></div> 
-          </div>
+          <div className="avatar"></div>
           <span className="name">Nexus</span>
         </div>
         <div className="nav-group">
           <label>Workspace</label>
-          <div className="nav-item active">+ New Project</div>
+          <div className="nav-item active">New Project</div>
           <div className="nav-item">Archive</div>
         </div>
-        <div className="version-tag">STABLE // V1.2</div>
+        <div className="version">STABLE // V1.2</div>
       </aside>
 
       <main className="canvas">
@@ -61,73 +56,51 @@ export default function Home() {
             <textarea 
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Describe what you want to build..."
+              placeholder="What are we building today?"
             />
             <div className="card-footer">
-              <button onClick={handleGenerate} disabled={loading}>
-                {loading ? 'Consulting Nexus...' : 'Generate Code'}
+              <button onClick={handleGenerate} disabled={loading} className={loading ? 'loading' : ''}>
+                {loading ? 'Nexus Thinking...' : 'Generate'}
               </button>
             </div>
           </div>
         </section>
 
         {output && (
-          <section className="output-area">
+          <div className="output-area">
             <div className="output-card">
-              <div className="output-label">Nexus Intelligence Stream</div>
+              <div className="output-label">Nexus Stream</div>
               <pre>{output}</pre>
             </div>
-          </section>
+          </div>
         )}
       </main>
 
       <style jsx global>{`
-        * { box-sizing: border-box; }
-        body, html { 
-          margin: 0; padding: 0; 
-          background: #FFF9F2; 
-          color: #1A1A1A;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .app-container { display: flex; height: 100vh; width: 100vw; overflow: hidden; }
-        
-        .sidebar { 
-          width: 260px; background: #FAF5EF; border-right: 1px solid #EDE7DF; 
-          padding: 40px; display: flex; flex-direction: column; 
-        }
+        body, html { margin: 0; padding: 0; background: #FFF9F2; color: #1A1A1A; font-family: -apple-system, sans-serif; }
+        .app-container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background: #FAF5EF; border-right: 1px solid #EDE7DF; padding: 40px; display: flex; flex-direction: column; }
+        .avatar { width: 40px; height: 40px; background: #1A1A1A; border-radius: 50%; }
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 60px; }
-        .placeholder-avatar { 
-          width: 40px; height: 40px; background: #1A1A1A; border-radius: 50%; 
-        }
-        .name { font-weight: 900; font-size: 22px; letter-spacing: -1px; }
-        
-        .nav-group label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; display: block; margin-bottom: 20px; }
-        .nav-item { padding: 14px; border-radius: 14px; font-size: 15px; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
-        .nav-item.active { background: white; border: 1px solid #EDE7DF; font-weight: 700; }
-        
-        .canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; overflow-y: auto; }
-        .hero { width: 100%; max-width: 900px; text-align: center; margin-bottom: 50px; }
-        h1 { font-size: 88px; font-weight: 900; margin: 0; letter-spacing: -5px; line-height: 0.9; }
-        .hero p { font-size: 22px; opacity: 0.4; margin-top: 20px; font-weight: 500; }
-        
-        .input-area { width: 100%; max-width: 900px; } 
-        .card { 
-          background: white; border-radius: 24px; padding: 24px; 
-          border: 1px solid #EDE7DF; box-shadow: 0 40px 80px rgba(180, 160, 140, 0.12);
-        }
+        .name { font-weight: 900; font-size: 24px; letter-spacing: -1px; }
+        .nav-group label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.3; margin-bottom: 20px; display: block; }
+        .nav-item { padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-size: 14px; transition: 0.2s; }
+        .nav-item.active { background: white; border: 1px solid #EDE7DF; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; overflow-y: auto; }
+        .hero { text-align: center; margin-bottom: 50px; }
+        h1 { font-size: 88px; font-weight: 900; letter-spacing: -5px; margin: 0; line-height: 0.9; }
+        .hero p { font-size: 22px; opacity: 0.4; margin-top: 15px; font-weight: 500; }
+        .input-area { width: 100%; max-width: 900px; }
+        .card { background: white; border-radius: 24px; padding: 24px; border: 1px solid #EDE7DF; box-shadow: 0 40px 80px rgba(180, 160, 140, 0.1); }
         textarea { width: 100%; height: 80px; border: none; outline: none; font-size: 20px; resize: none; background: transparent; }
-        
         .card-footer { display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #FAF5EF; }
-        button { 
-          background: #1A1A1A; color: white; padding: 12px 32px; border-radius: 12px; 
-          font-weight: 800; border: none; cursor: pointer; font-size: 14px;
-        }
-
-        .output-area { width: 100%; max-width: 900px; margin-top: 40px; }
-        .output-card { background: white; border-radius: 24px; padding: 32px; border: 1px solid #EDE7DF; }
-        .output-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; opacity: 0.3; margin-bottom: 16px; }
-        pre { font-family: monospace; white-space: pre-wrap; font-size: 14px; color: #4A4A4A; line-height: 1.6; }
-        .version-tag { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; }
+        button { background: #1A1A1A; color: white; padding: 12px 36px; border-radius: 14px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        button.loading { opacity: 0.5; cursor: not-allowed; }
+        .output-area { width: 100%; max-width: 900px; margin-top: 40px; padding-bottom: 100px; }
+        .output-card { background: white; padding: 32px; border-radius: 28px; border: 1px solid #EDE7DF; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        .output-label { font-size: 10px; font-weight: 900; text-transform: uppercase; opacity: 0.2; letter-spacing: 2px; margin-bottom: 15px; }
+        pre { white-space: pre-wrap; font-family: 'SF Mono', monospace; font-size: 14px; line-height: 1.6; color: #333; margin: 0; }
+        .version { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; }
       `}</style>
     </div>
   );
