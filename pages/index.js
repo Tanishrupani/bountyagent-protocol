@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 
 export default function Home() {
   const [prompt, setPrompt] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
+
+  // Load history from local storage so it doesn't vanish on refresh
+  useEffect(() => {
+    const saved = localStorage.getItem('nexus_history');
+    if (saved) setHistory(JSON.parse(saved));
+  }, []);
 
   const handleGenerate = async () => {
     if (!prompt) return;
     setLoading(true);
-    setOutput('');
     try {
       const res = await fetch('/api/generate', {
         method: 'POST',
@@ -18,18 +24,27 @@ export default function Home() {
       });
       const data = await res.json();
       if (res.ok) {
+        const newEntry = { prompt, code: data.code, id: Date.now() };
+        const updatedHistory = [newEntry, ...history];
+        setHistory(updatedHistory);
+        localStorage.setItem('nexus_history', JSON.stringify(updatedHistory));
         setOutput(data.code);
       } else {
-        setOutput(`[Nexus Error]: ${data.message}`);
+        setOutput(`[Error]: ${data.message}`);
       }
     } catch (err) {
-      setOutput("[Nexus Error]: Intelligence Stream Interrupted.");
+      setOutput("[Error]: Link Failure.");
     }
     setLoading(false);
   };
 
+  const startNew = () => {
+    setPrompt('');
+    setOutput('');
+  };
+
   return (
-    <div className="app-container">
+    <div className="container">
       <Head><title>Nexus Protocol</title></Head>
 
       <aside className="sidebar">
@@ -37,68 +52,95 @@ export default function Home() {
           <div className="avatar"></div>
           <span className="name">Nexus</span>
         </div>
-        <div className="nav-group">
-          <label>Workspace</label>
-          <div className="nav-item active">New Project</div>
-          <div className="nav-item">History</div>
+        
+        <div className="nav">
+          <button className="new-btn" onClick={startNew}>+ New Project</button>
+          
+          <div className="history-section">
+            <label>History</label>
+            <div className="history-list">
+              {history.map(item => (
+                <div key={item.id} className="history-item" onClick={() => setOutput(item.code)}>
+                  {item.prompt.substring(0, 25)}...
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
         <div className="version">V1.2 // STABLE</div>
       </aside>
 
       <main className="canvas">
-        <header className="hero">
-          <h1>Build anything.</h1>
-          <p>The autonomous engine for rapid development.</p>
-        </header>
+        <div className="scroll-wrapper">
+          <header className="hero">
+            <h1>Build anything.</h1>
+            <p>The autonomous engine for rapid development.</p>
+          </header>
 
-        <section className="input-area">
-          <div className="card">
+          <div className="command-bar">
             <textarea 
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              placeholder="What are we building today?"
+              placeholder="Describe the build..."
             />
-            <div className="card-footer">
+            <div className="bar-footer">
               <button onClick={handleGenerate} disabled={loading}>
-                {loading ? 'Consulting Nexus...' : 'Generate'}
+                {loading ? 'Thinking...' : 'Generate'}
               </button>
             </div>
           </div>
-        </section>
 
-        {output && (
-          <div className="output-area">
-            <div className="output-card">
-              <div className="output-label">Nexus Intelligence Stream</div>
-              <pre>{output}</pre>
+          {output && (
+            <div className="output-container">
+              <div className="output-header">
+                <span>Intelligence Stream</span>
+                <button onClick={() => navigator.clipboard.writeText(output)}>Copy Code</button>
+              </div>
+              <div className="code-window">
+                <pre>{output}</pre>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </main>
 
       <style jsx global>{`
-        body, html { margin: 0; padding: 0; background: #FFF9F2; color: #1A1A1A; font-family: -apple-system, sans-serif; }
-        .app-container { display: flex; height: 100vh; }
-        .sidebar { width: 260px; background: #FAF5EF; border-right: 1px solid #EDE7DF; padding: 40px; display: flex; flex-direction: column; }
-        .avatar { width: 40px; height: 40px; background: #1A1A1A; border-radius: 50%; }
-        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 60px; }
-        .name { font-weight: 900; font-size: 24px; letter-spacing: -1px; }
-        .nav-group label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.3; margin-bottom: 20px; display: block; }
-        .nav-item { padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-size: 14px; }
-        .nav-item.active { background: white; border: 1px solid #EDE7DF; font-weight: 700; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; overflow-y: auto; }
+        body { margin: 0; background: #FFF9F2; color: #1A1A1A; font-family: -apple-system, sans-serif; overflow: hidden; }
+        .container { display: flex; height: 100vh; width: 100vw; }
+        
+        /* Sidebar */
+        .sidebar { width: 280px; background: #FAF5EF; border-right: 1px solid #EDE7DF; padding: 30px; display: flex; flex-direction: column; }
+        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+        .avatar { width: 36px; height: 36px; background: #1A1A1A; border-radius: 50%; }
+        .name { font-weight: 900; font-size: 22px; letter-spacing: -1px; }
+        
+        .new-btn { width: 100%; padding: 12px; background: white; border: 1px solid #EDE7DF; border-radius: 12px; font-weight: 700; cursor: pointer; margin-bottom: 30px; }
+        .history-section label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.3; letter-spacing: 1px; display: block; margin-bottom: 15px; }
+        .history-list { overflow-y: auto; max-height: 50vh; }
+        .history-item { padding: 10px; font-size: 13px; opacity: 0.6; cursor: pointer; border-radius: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-item:hover { background: white; opacity: 1; }
+
+        /* Main Canvas */
+        .canvas { flex: 1; position: relative; height: 100vh; }
+        .scroll-wrapper { width: 100%; height: 100%; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 80px 40px; }
+        
         .hero { text-align: center; margin-bottom: 40px; }
-        h1 { font-size: 88px; font-weight: 900; letter-spacing: -5px; margin: 0; line-height: 0.9; }
-        .hero p { font-size: 22px; opacity: 0.4; margin-top: 15px; }
-        .input-area { width: 100%; max-width: 900px; }
-        .card { background: white; border-radius: 24px; padding: 24px; border: 1px solid #EDE7DF; box-shadow: 0 40px 80px rgba(0,0,0,0.05); }
-        textarea { width: 100%; height: 80px; border: none; outline: none; font-size: 20px; resize: none; background: transparent; }
-        .card-footer { display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #FAF5EF; }
-        button { background: #1A1A1A; color: white; padding: 12px 30px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #000; transform: scale(1.02); }
-        .output-area { width: 100%; max-width: 900px; margin-top: 40px; padding-bottom: 100px; }
-        .output-card { background: white; padding: 32px; border-radius: 28px; border: 1px solid #EDE7DF; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
-        pre { white-space: pre-wrap; font-family: monospace; font-size: 14px; line-height: 1.6; color: #333; }
+        h1 { font-size: 72px; font-weight: 900; letter-spacing: -4px; margin: 0; }
+        .hero p { opacity: 0.4; font-size: 18px; margin-top: 10px; }
+
+        .command-bar { width: 100%; max-width: 800px; background: white; border-radius: 20px; padding: 20px; border: 1px solid #EDE7DF; box-shadow: 0 30px 60px rgba(0,0,0,0.05); }
+        textarea { width: 100%; height: 50px; border: none; outline: none; font-size: 18px; resize: none; background: transparent; }
+        .bar-footer { display: flex; justify-content: flex-end; padding-top: 15px; border-top: 1px solid #FAF5EF; }
+        
+        /* Output Window Fix */
+        .output-container { width: 100%; max-width: 800px; margin-top: 40px; background: #1A1A1A; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .output-header { padding: 12px 20px; background: #2A2A2A; display: flex; justify-content: space-between; align-items: center; color: #888; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .output-header button { background: transparent; border: 1px solid #444; color: #AAA; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 10px; }
+        
+        .code-window { max-height: 500px; overflow-y: auto; padding: 25px; }
+        pre { margin: 0; color: #E0E0E0; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+        
+        button { background: #1A1A1A; color: white; padding: 10px 24px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; }
         .version { margin-top: auto; font-size: 10px; opacity: 0.2; font-family: monospace; }
       `}</style>
     </div>
